@@ -11,36 +11,17 @@ import retrofit2.Response
 
 class ConverterViewModel(private val converterRepository: ConverterRepository) : ViewModel() {
 
-    val symbolsVM:MutableLiveData<Resourse<Symbols>> = MutableLiveData()
+    val exchangeRateVM:MutableLiveData<Resourse<ExchangeRate>> = MutableLiveData()
 
-    val latestVM:MutableLiveData<Resourse<Latest>> = MutableLiveData()
-
-    fun getSymbols(apiKey:String){
+    fun getExchangeRate(apiKey:String, to:String, from: String){
         viewModelScope.launch {
-            symbolsVM.postValue(Resourse.Loading())
-            val response = converterRepository.getSymbols(apiKey)
-            symbolsVM.postValue(handleSymbolsResponse(response))
+            exchangeRateVM.postValue(Resourse.Loading())
+            val response = converterRepository.getExchangeRate(apiKey, to, from)
+            exchangeRateVM.postValue(handleExchangeRateResponse(response))
         }
     }
 
-    fun getLatest(apiKey:String, to:String, from: String){
-        viewModelScope.launch {
-            latestVM.postValue(Resourse.Loading())
-            val response = converterRepository.getLatest(apiKey, to, from)
-            latestVM.postValue(handleLatestResponse(response))
-        }
-    }
-
-    private fun handleSymbolsResponse(response: Response<Symbols>):Resourse<Symbols>{
-        if(response.isSuccessful){
-            response.body()?.let{ resultResponse ->
-                return Resourse.Success(resultResponse)
-            }
-        }
-        return Resourse.Error(response.message())
-    }
-
-    private fun handleLatestResponse(response: Response<Latest>):Resourse<Latest>{
+    private fun handleExchangeRateResponse(response: Response<ExchangeRate>):Resourse<ExchangeRate>{
         if(response.isSuccessful){
             response.body()?.let{ resultResponse ->
                 return Resourse.Success(resultResponse)
