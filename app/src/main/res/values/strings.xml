@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CurrencyConverter</string>
+    <string name="app_name">Конвертер валют</string>
     <string-array name="symbols">
         <item>"AED"</item>
         <item>"AFN"</item>
@@ -171,4 +171,8 @@
         <item>"ZMW"</item>
         <item>"ZWL"</item>
     </string-array>
+    <string name = "fromSum">Введіть суму</string>
+    <string name="change">Обмінюю:</string>
+    <string name="get">Отримую:</string>
+    <string name="noValue">0.00</string>
 </resources>
