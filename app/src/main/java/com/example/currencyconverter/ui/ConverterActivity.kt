@@ -34,10 +34,15 @@ class ConverterActivity : AppCompatActivity() {
             ViewModelProvider(this, viewModelProviderFactory)[ConverterViewModel::class.java]
 
         val symbolsAdapter =
-            ArrayAdapter.createFromResource(this, R.array.symbols, android.R.layout.simple_spinner_item)
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.symbols,
+                android.R.layout.simple_spinner_item
+            )
 
-        binding.spFromValue.adapter = symbolsAdapter
-        binding.spToValue.adapter = symbolsAdapter
+        with(binding) {
+            spFromValue.adapter = symbolsAdapter
+            spToValue.adapter = symbolsAdapter
 
         binding.spFromValue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -50,67 +55,65 @@ class ConverterActivity : AppCompatActivity() {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
-        binding.spToValue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                toCurrency = adapterView?.getItemAtPosition(position).toString()
-                viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
-                getResult(binding.etAmount.text.toString(), exchangeRate)
+            spToValue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    toCurrency = adapterView?.getItemAtPosition(position).toString()
+                    viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-        }
+            etAmount.doOnTextChanged { _, _, _, _ ->
+                getResult(exchangeRate)
+            }
 
-        viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
-        viewModel.exchangeRateVM.observe(this, {response ->
-            when(response) {
-                is Resourse.Success ->{
-                    binding.pbResult.isVisible = false
-                    response.data.let{
-                        if (it!=null){
-                            exchangeRate = it.result
+            ivReverse.setOnClickListener {
+                val spinnerPositionFrom = symbolsAdapter.getPosition(fromCurrency)
+                val spinnerPositionTo = symbolsAdapter.getPosition(toCurrency)
+
+                spFromValue.setSelection(spinnerPositionTo)
+                spToValue.setSelection(spinnerPositionFrom)
+
+                val buff = fromCurrency
+                fromCurrency = toCurrency
+                toCurrency = buff
+
+                viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
+            }
+
+            viewModel.exchangeRateVM.observe(this@ConverterActivity, { response ->
+                when (response) {
+                    is Resourse.Success -> {
+                        pbResult.isVisible = false
+                        response.data.let {
+                            if (it != null) {
+                                exchangeRate = it.result
+                                getResult(exchangeRate)
+                            }
                         }
                     }
-                }
-                is Resourse.Error -> {
-                    binding.pbResult.isVisible = false
-                    response.message?.let {
-                        Log.e("TAG", "An error occurred: $it")
+                    is Resourse.Error -> {
+                        pbResult.isVisible = false
+                        response.message?.let {
+                            Log.e("TAG", "An error occurred: $it")
+                        }
+                    }
+                    is Resourse.Loading -> {
+                        pbResult.isVisible = true
                     }
                 }
-                is Resourse.Loading -> {
-                    binding.pbResult.isVisible = true
-                }
-            }
-        })
-
-
-        with(binding) {
-            etAmount.doOnTextChanged { text, start, before, count ->
-                getResult(text, exchangeRate)
-            }
+            })
         }
-
-        binding.ivReverse.setOnClickListener {
-            val spinnerPositionFrom = symbolsAdapter.getPosition(fromCurrency)
-            val spinnerPositionTo = symbolsAdapter.getPosition(toCurrency)
-
-            binding.spFromValue.setSelection(spinnerPositionFrom)
-            binding.spToValue.setSelection(spinnerPositionTo)
-
-            val buff = fromCurrency
-            fromCurrency = toCurrency
-            toCurrency = buff
-
-            viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
-            getResult(binding.etAmount.text.toString(), exchangeRate)
-        }
-
-
     }
 
-    private fun getResult (text: CharSequence?, er:Double){
-        with(binding){
-            if (etAmount.text.toString()!="" && text!=null && text.last()!='.' && text.last()!=','){
+    private fun getResult(er: Double) {
+        with(binding) {
+            if (etAmount.text.toString() != "") {
                 val amount = etAmount.text.toString().toDouble()
                 var result = amount * er
                 result = (result * 100.0).roundToInt() / 100.0
