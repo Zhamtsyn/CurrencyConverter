@@ -118,9 +118,8 @@ class ConverterActivity : AppCompatActivity() {
                 var result = amount * er
                 result = (result * 100.0).roundToInt() / 100.0
                 tvResult.text = result.toString()
-            }
-            else if (etAmount.text.toString() ==""){
-                tvResult.text = ""
+            } else {
+                tvResult.setText(R.string.noValue)
             }
         }
 
