@@ -6,18 +6,19 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import com.example.currencyconverter.R
 import com.example.currencyconverter.databinding.ActivityConverterBinding
-import com.example.currencyconverter.repository.ConverterRepository
 import com.example.currencyconverter.util.Constants.Companion.API_KEY
 import com.example.currencyconverter.util.Resourse
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class ConverterActivity : AppCompatActivity() {
-    lateinit var viewModel: ConverterViewModel
+    private val viewModel: ConverterViewModel by viewModels()
     private lateinit var binding: ActivityConverterBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +28,6 @@ class ConverterActivity : AppCompatActivity() {
         var fromCurrency = "USD"
         var toCurrency = "UAH"
         var exchangeRate = 0.0
-
-        val converterRepository = ConverterRepository()
-        val viewModelProviderFactory = ConverterViewModelProviderFactory(converterRepository)
-        viewModel =
-            ViewModelProvider(this, viewModelProviderFactory)[ConverterViewModel::class.java]
 
         val symbolsAdapter =
             ArrayAdapter.createFromResource(

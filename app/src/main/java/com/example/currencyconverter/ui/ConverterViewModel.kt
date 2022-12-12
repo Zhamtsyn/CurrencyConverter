@@ -4,12 +4,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencyconverter.repository.ConverterRepository
-import com.example.currencyconverter.response.*
 import com.example.currencyconverter.util.Resourse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import javax.inject.Inject
 
-class ConverterViewModel(private val converterRepository: ConverterRepository) : ViewModel() {
+@HiltViewModel
+class ConverterViewModel @Inject constructor(private val converterRepository: ConverterRepository) : ViewModel() {
 
     val exchangeRateVM:MutableLiveData<Resourse<ExchangeRate>> = MutableLiveData()
 

@@ -1,9 +1,10 @@
 package com.example.currencyconverter.repository
 
-import com.example.currencyconverter.api.RetrofitInstance
+import com.example.currencyconverter.data.ConverterApi
+import javax.inject.Inject
 
-class ConverterRepository {
+class ConverterRepository @Inject constructor(private val api:ConverterApi) {
 
     suspend fun getExchangeRate(apiKey:String, to:String, from: String) =
-        RetrofitInstance.api.getExchangeRate(apiKey,to, from, 1)
+        api.getExchangeRate(apiKey,to, from, 1)
 }
