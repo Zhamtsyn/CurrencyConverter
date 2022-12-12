@@ -1,9 +1,9 @@
-package com.example.currencyconverter.ui
+package com.example.currencyconverter.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.currencyconverter.repository.ConverterRepository
+import com.example.currencyconverter.data.models.ExchangeRate
 import com.example.currencyconverter.util.Resourse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

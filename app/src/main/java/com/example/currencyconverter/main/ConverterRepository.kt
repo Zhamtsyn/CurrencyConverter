@@ -1,4 +1,4 @@
-package com.example.currencyconverter.repository
+package com.example.currencyconverter.main
 
 import com.example.currencyconverter.data.ConverterApi
 import javax.inject.Inject

@@ -1,11 +1,10 @@
 package com.example.currencyconverter.di
 
 import com.example.currencyconverter.data.ConverterApi
-import com.example.currencyconverter.repository.ConverterRepository
+import com.example.currencyconverter.main.ConverterRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.internal.managers.ApplicationComponentManager
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

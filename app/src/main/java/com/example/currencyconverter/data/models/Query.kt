@@ -1,4 +1,4 @@
-package com.example.currencyconverter.response
+package com.example.currencyconverter.data.models
 
 data class Query(
     val amount: Int,

@@ -1,6 +1,6 @@
-package com.example.currencyconverter.api
+package com.example.currencyconverter.data
 
-import com.example.currencyconverter.response.ExchangeRate
+import com.example.currencyconverter.data.models.ExchangeRate
 import com.example.currencyconverter.util.Constants.Companion.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET

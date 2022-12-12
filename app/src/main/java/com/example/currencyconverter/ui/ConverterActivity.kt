@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.example.currencyconverter.R
 import com.example.currencyconverter.databinding.ActivityConverterBinding
+import com.example.currencyconverter.main.ConverterViewModel
 import com.example.currencyconverter.util.Constants.Companion.API_KEY
 import com.example.currencyconverter.util.Resourse
 import dagger.hilt.android.AndroidEntryPoint
