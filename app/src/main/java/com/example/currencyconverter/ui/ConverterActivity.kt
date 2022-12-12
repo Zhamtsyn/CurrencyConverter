@@ -24,8 +24,8 @@ class ConverterActivity : AppCompatActivity() {
         binding = ActivityConverterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var fromCurrency = "AED"
-        var toCurrency= "AED"
+        var fromCurrency = "USD"
+        var toCurrency = "UAH"
         var exchangeRate = 0.0
 
         val converterRepository = ConverterRepository()
@@ -44,16 +44,22 @@ class ConverterActivity : AppCompatActivity() {
             spFromValue.adapter = symbolsAdapter
             spToValue.adapter = symbolsAdapter
 
-        binding.spFromValue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                fromCurrency = adapterView?.getItemAtPosition(position).toString()
-                viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
-                getResult(binding.etAmount.text.toString(), exchangeRate)
+            spFromValue.setSelection(symbolsAdapter.getPosition(fromCurrency))
+            spToValue.setSelection(symbolsAdapter.getPosition(toCurrency))
 
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-        }
+            spFromValue.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapterView: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        fromCurrency = adapterView?.getItemAtPosition(position).toString()
+                        viewModel.getExchangeRate(API_KEY, toCurrency, fromCurrency)
+                    }
+                    override fun onNothingSelected(p0: AdapterView<*>?) {}
+                }
 
             spToValue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
