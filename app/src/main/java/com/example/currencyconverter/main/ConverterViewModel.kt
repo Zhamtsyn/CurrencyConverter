@@ -2,33 +2,43 @@ package com.example.currencyconverter.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.currencyconverter.data.models.ExchangeRate
 import com.example.currencyconverter.util.Resourse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers.io
 import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class ConverterViewModel @Inject constructor(private val converterRepository: ConverterRepository) : ViewModel() {
+class ConverterViewModel @Inject constructor(private val converterRepository: ConverterRepository) :
+    ViewModel() {
 
-    val exchangeRateVM:MutableLiveData<Resourse<ExchangeRate>> = MutableLiveData()
+    val exchangeRateVM: MutableLiveData<Resourse<ExchangeRate>> = MutableLiveData()
 
-    fun getExchangeRate(apiKey:String, to:String, from: String){
-        viewModelScope.launch {
-            exchangeRateVM.postValue(Resourse.Loading())
-            val response = converterRepository.getExchangeRate(apiKey, to, from)
-            exchangeRateVM.postValue(handleExchangeRateResponse(response))
-        }
+    var disposables = CompositeDisposable()
+
+    fun getExchangeRate(apiKey: String, to: String, from: String) {
+        exchangeRateVM.postValue(Resourse.Loading())
+        disposables.add(
+            converterRepository.getExchangeRate(apiKey, to, from)
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .subscribe { response: Response<ExchangeRate> ->
+                    if (response.isSuccessful) {
+                        response.body()?.let { result ->
+                            exchangeRateVM.postValue(Resourse.Success(result))
+                        }
+                    } else {
+                        exchangeRateVM.postValue(Resourse.Error(response.message()))
+                    }
+                }
+        )
     }
 
-    private fun handleExchangeRateResponse(response: Response<ExchangeRate>):Resourse<ExchangeRate>{
-        if(response.isSuccessful){
-            response.body()?.let{ resultResponse ->
-                return Resourse.Success(resultResponse)
-            }
-        }
-        return Resourse.Error(response.message())
+    override fun onCleared() {
+        super.onCleared()
+        disposables.dispose()
     }
 }
